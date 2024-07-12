@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Regalos para 15 Años</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Regalos para 15 Años</h1>
+        <ul id="gift-list"></ul>
+    </div>
+    <script>
+        function fetchGifts() {
+            fetch('gifts.php')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Datos recibidos:', data);
+                    
+                    const giftList = document.getElementById('gift-list');
+                    giftList.innerHTML = '';
+                    data.forEach(gift => {
+                        const li = document.createElement('li');
+                        const span = document.createElement('span');
+                        span.textContent = gift.name;
+                        li.appendChild(span);
+                        if (gift.reserved === false) {  // Cambiado de !gift.reserved a gift.reserved === false
+                            const button = document.createElement('button');
+                            button.textContent = 'Reservar';
+                            button.onclick = () => reserveGift(gift.id);
+                            li.appendChild(button);
+                        } else {
+                            const reservedText = document.createElement('span');
+                            reservedText.textContent = ' (Reservado)';
+                            reservedText.style.color = 'red';
+                            li.appendChild(reservedText);
+                        }
+                        giftList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al obtener la lista de regalos:', error);
+                    alert('Error al obtener la lista de regalos. Verifica la consola para más detalles.');
+                });
+        }
+
+        function reserveGift(giftId) {
+            fetch(`reserve.php?id=${giftId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('¡Regalo reservado exitosamente!');
+                        fetchGifts();
+                    } else {
+                        alert('Error al reservar el regalo: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Hubo un problema con la operación fetch:', error);
+                    alert('Error al comunicarse con el servidor.');
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchGifts);
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Regalos para 15 Años</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Regalos para 15 Años</h1>
+        <ul id="gift-list">
+            <li>
+                <span>Reloj de pulsera</span>
+                <button onclick="reserveGift(1)">Reservar</button>
+            </li>
+            <li>
+                <span>Collar de oro</span>
+                <button onclick="reserveGift(2)">Reservar</button>
+            </li>
+            <li>
+                <span>Bolso de diseñador</span>
+                <button onclick="reserveGift(3)">Reservar</button>
+            </li>
+            <li>
+                <span>Perfume de lujo</span>
+                <button onclick="reserveGift(4)">Reservar</button>
+            </li>
+            <li>
+                <span>Zapatos de tacón</span>
+                <button onclick="reserveGift(5)">Reservar</button>
+            </li>
+        </ul>
+    </div>
+    <script>
+        function reserveGift(giftId) {
+            fetch(`reserve.php?id=${giftId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('¡Regalo reservado exitosamente!');
+                        location.reload();
+                    } else {
+                        alert('Error al reservar el regalo.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hubo un problema con la operación fetch:', error);
+                    alert('Error al comunicarse con el servidor.');
+                });
+        }
+    </script>
+</body>
+</html>
+    
